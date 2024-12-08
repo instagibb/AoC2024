@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	s "strings"
 )
@@ -22,6 +23,8 @@ func main() {
 	// Safe count
 	safe := 0
 
+	var unsafeReports = make([]string, 0)
+
 	// Check each report
 	for _, report := range reports {
 		if len(report) == 0 {
@@ -29,11 +32,35 @@ func main() {
 		}
 		if checkReport(s.Split(report, " ")) {
 			safe += 1
+		} else {
+			// add report to unsafe to be scanned again
+			unsafeReports = append(unsafeReports, report)
 		}
+
 	}
 
 	// Print safe count
 	fmt.Println(safe)
+
+	// Safe count
+	extraSafe := 0
+
+	// Check unsafe reports again with new rules
+	for _, unsafeReport := range unsafeReports {
+		//fmt.Println("Checking unsafe report", unsafeReport)
+		var ur = s.Split(unsafeReport, " ")
+		// Try to remove each index and check if it's safe, bail on first safe
+		for i := 0; i < len(ur); i++ {
+			var ammendedReport = slices.Concat(ur[:i], ur[i+1:])
+			//fmt.Println("Ammended report", ammendedReport)
+			if checkReport(ammendedReport) {
+				extraSafe += 1
+				break
+			}
+		}
+	}
+
+	fmt.Println(safe + extraSafe)
 }
 
 func checkReport(report []string) bool {
