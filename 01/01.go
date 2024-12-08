@@ -62,4 +62,27 @@ func main() {
 	}
 	fmt.Println(sum)
 
+	// Part 2
+	var similarity = make([]int, len(lines))
+	for i := 0; i < len(first); i++ {
+		var f = first[i]
+
+		if slices.Contains(second, f) {
+			// get the count of times f appears in second
+			count := 0
+			for _, test := range second {
+				if test == f {
+					count += 1
+				}
+			}
+			var fInt, _ = strconv.Atoi(f)
+			similarity[i] = fInt * count
+		}
+
+	}
+	simsum := 0
+	for _, sim := range similarity {
+		simsum += sim
+	}
+	fmt.Println(simsum)
 }
